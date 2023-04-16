@@ -1,0 +1,75 @@
+programa : 
+	':' 'DECLARACOES' listaDeclaracoes 
+	':' 'ALGORITMO' listaComandos;
+listaDeclaracoes : 
+	tipoVar declaracao listaDeclaracoes | tipoVar declaracao | VAZIO
+declaracao : 
+	'VARIAVEL'
+tipoVar : 
+	'INTEIRO' | 'REAL';
+expressaoAritmetica : 
+	expressaoAritmetica '+' termoAritmetico |
+	expressaoAritmetica '-' termoAritmetico | 
+	termoAritmetico;
+--------------------------------------------------
+#Fatorando à esquerda e eliminando recursividade à esquerda
+expressaoAritmetica:
+	termoAritmetico expressaoAritmetica2
+expressaoAritmetica2:
+	expressaoAritmetica3 expressaoAritmetica2 |
+	VAZIO
+expressaoAritmetica3:
+	'+' termoAritmetico |
+	'-' termoAritmetico 
+--------------------------------------------------
+
+termoAritmetico : 
+	termoAritmetico '*' fatorAritmetico |
+	termoAritmetico '/' fatorAritmetico |
+	fatorAritmetico;
+--------------------------------------------------
+#Fatorando à esquerda e eliminando recursividade à esquerda
+termoAritmetico:
+	fatorAritmetico termoAritmetico2
+termoAritmetico2:
+	termoAritmetico3 termoAritmetico2 |
+	VAZIO
+termoAritmetico3:
+	'*' fatorAritmetico |
+	'/' fatorAritmetico 
+--------------------------------------------------
+fatorAritmetico : 
+	NUMINT | NUMREAL | VARIAVEL |
+	'(' expressaoAritmetica ')'
+expressaoRelacional : 
+	expressaoRelacional operadorBooleano termoRelacional | 
+	termoRelacional;
+--------------------------------------------------
+#Fatorando à esquerda e eliminando recursividade à esquerda
+expressaoRelacional : 
+	termoRelacional expressaoRelacional2
+expressaoRelacional2:
+	operadorBooleano termoRelacional expressaoRelacional2 |
+	VAZIO
+--------------------------------------------------
+fatorAritmetico : 
+termoRelacional : 
+	expressaoAritmetica OP_REL expressaoAritmetica |
+	'(' expressaoRelacional ')';
+operadorBooleano : 
+	'E' | 'OU';
+listaComandos : 
+	comando listaComandos | comando;
+comando : 
+	comandoAtribuicao | 
+	comandoSaida | 
+	comandoCondicao | 
+	comandoRepeticao;
+comandoAtribuicao : 
+	VARIAVEL '=' expressaoAritmetica;
+comandoSaida : 
+	'PRINT'  (VARIAVEL | CADEIA);
+comandoCondicao : 
+	'IF' expressaoRelacional 'THEN' comando | 
+	'IF' expressaoRelacional 'THEN' comando 'ELSE' comando;
+comandoRepeticao : 'WHILE' expressaoRelacional comando;
